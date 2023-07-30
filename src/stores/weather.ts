@@ -3,12 +3,13 @@ import { ref, watch } from "vue";
 import { useCitiesStore } from "./cities";
 import { LocationData } from "@/services/locationData";
 import { getWeatherData } from "@/services/api";
+import type { WeatherInfo } from "@/types";
 
 export const useWeatherStore = defineStore("weather", () => {
   const { saveCity } = useCitiesStore();
   const { savedCities } = storeToRefs(useCitiesStore());
   const currentLocation = ref<LocationData>(new LocationData());
-  const weatherReport = ref<{ [key: string]: any }>({});
+  const weatherReport = ref<{ [key: string]: WeatherInfo }>({});
   const initWeatherReport = async () => {
     const promiseArr = [];
     for (const city of savedCities.value) {

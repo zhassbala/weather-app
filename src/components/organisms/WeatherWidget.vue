@@ -10,8 +10,8 @@
 
 <script setup lang="ts">
 import { useWeatherStore } from "@/stores/weather";
-import WeatherReportCard from "../molecules/WeatherReportCard.vue";
 import { useCitiesStore } from "@/stores/cities";
+import WeatherReportCard from "../molecules/WeatherReportCard.vue";
 
 const weather = useWeatherStore();
 const cities = useCitiesStore();

@@ -47,8 +47,3 @@ export const useCitiesStore = defineStore("cities", () => {
     bulkSave,
   };
 });
-
-/**
-  latitude: 47.1085988
-  longitude: 51.94512
- */
