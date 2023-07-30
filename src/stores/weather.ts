@@ -1,18 +1,19 @@
-import { defineStore, storeToRefs } from "pinia";
-import { ref, watch } from "vue";
-import { useCitiesStore } from "./cities";
+import { defineStore } from "pinia";
+import { ref } from "vue";
 import { LocationData } from "@/services/locationData";
 import { getWeatherData } from "@/services/api";
-import type { WeatherInfo } from "@/types";
+import type { City, WeatherInfo } from "@/types";
 
 export const useWeatherStore = defineStore("weather", () => {
-  const { saveCity } = useCitiesStore();
-  const { savedCities } = storeToRefs(useCitiesStore());
   const currentLocation = ref<LocationData>(new LocationData());
   const weatherReport = ref<{ [key: string]: WeatherInfo }>({});
-  const initWeatherReport = async () => {
+  const initWeatherReport = async (savedCities: City[]) => {
+    if (savedCities.length <= 0) {
+      await addCurrentLocation();
+      return;
+    }
     const promiseArr = [];
-    for (const city of savedCities.value) {
+    for (const city of savedCities) {
       if (weatherReport.value[city.id]) continue; // only update cities that we don't have weather data for
       const weatherData = getWeatherData(city).then(
         (res) => (weatherReport.value[city.id] = res.data),
@@ -20,17 +21,13 @@ export const useWeatherStore = defineStore("weather", () => {
       promiseArr.push(weatherData);
     }
     if (!currentLocation.value.initialized) promiseArr.push(currentLocation.value.init());
-    await Promise.allSettled(promiseArr).then(async () => {
-      if (savedCities.value.length <= 0) await addCurrentLocation();
-    });
+    await Promise.allSettled(promiseArr);
   };
   const addCurrentLocation = async () => {
     if (!currentLocation.value.initialized) {
       await currentLocation.value.init();
     }
-    saveCity(currentLocation.value.city);
   };
-  watch(savedCities, initWeatherReport);
   return {
     currentLocation,
     weatherReport,

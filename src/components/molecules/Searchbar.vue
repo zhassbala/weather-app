@@ -13,7 +13,7 @@
         <div
           class="p-2 border-y hover:bg-gray-200 cursor-pointer"
           v-if="isFocused || citiesList.length"
-          @click="weather.addCurrentLocation()"
+          @click="addCurrentLocation()"
         >
           <font-awesome-icon icon="fa-solid fa-location-arrow" class="mr-2" />
           Your current location
@@ -60,6 +60,11 @@ const handleBlur = () => {
   setTimeout(() => {
     isFocused.value = false;
   }, 150);
+};
+
+const addCurrentLocation = async () => {
+  await weather.addCurrentLocation();
+  saveCity(weather.currentLocation.city);
 };
 watch(searchText, queryCityName);
 </script>
